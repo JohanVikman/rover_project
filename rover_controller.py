@@ -1,4 +1,15 @@
 """We want to control some engines using a sixaxis PS3 controller
+
+   Remember to pair with the sixaxis controller using sixpair, do this
+   while the controller is connected using USB.
+
+   pi@raspberrypi:~/mystuff $ sudo ./sixpair
+   Current Bluetooth master: 00:0d:b5:21:2e:79
+   Setting master bd_addr to 00:0d:b5:21:2e:79
+
+   You can then disconnect the controller over USB and use the
+   bluetooth interface instead (press PS-button).
+
 """
 
 from pygame import joystick, event, display
@@ -9,12 +20,16 @@ import os
 GPIO.setmode(GPIO.BOARD)
 
 # GPIO Pin motor mapping
+# A/B are directions and E is for Enabling the motor.
+# Motor1 is forward/backwards
 Motor1A = 16
 Motor1B = 18
 Motor1E = 22
-
-Motor2A = 23
-Motor2B = 21
+# Motor1 is right/left
+Motor2A = 31
+Motor2B = 29                                                                   
+#Motor2A = 23
+#Motor2B = 21
 Motor2E = 19
 
 # PS 3 Button mapping:
@@ -43,7 +58,6 @@ def handle_button(event):
             GPIO.output(Motor1A,GPIO.HIGH)
             GPIO.output(Motor1B,GPIO.LOW)
             GPIO.output(Motor1E,GPIO.HIGH)
-
         elif event.button == DOWN:
             print "Going backwards"
             GPIO.output(Motor1A,GPIO.LOW)
@@ -67,14 +81,6 @@ def handle_button(event):
             GPIO.output(Motor2E,GPIO.LOW)
         
 
-os.environ["SDL_VIDEODRIVER"]="dummy"
-if 1:
-    #some platforms might need to init the display for some parts of pygame.
-    import pygame.display
-    screen = pygame.display.set_mode((1,1))
-
-
-
 ## Motor1 = Forwards/Backwards
 ## Motor2 = Right/Left
 def setup_motor():
@@ -90,8 +96,17 @@ def setup_motor():
 
 setup_motor()
 
+# USE Dummy display or else we cannot use pygame.event
+
+os.environ["SDL_VIDEODRIVER"]="dummy"
+if 1:
+    #some platforms might need to init the display for some parts of pygame.
+    screen = pygame.display.set_mode((1,1))
+
 
 pygame.init()
+
+#Assuming there's only on joystick connected.
 stick=joystick.Joystick(0)
 stick.init()
 
@@ -115,7 +130,7 @@ try:
 
 except (KeyboardInterrupt, SystemExit):
     print("Caught kbd interrupt or systemexit")
-    pygame.quit()
-    GPIO.cleanup()
 
+pygame.quit()
+GPIO.cleanup()
 print("All done, exiting")

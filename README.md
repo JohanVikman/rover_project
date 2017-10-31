@@ -9,5 +9,6 @@ Use the setup.sh script
 sudo apt-get build-dep python3-pygame
 
 python3 -m pip install wheel
-
 python3 -m pip install pygame
+python3 -m pip install rpio
+

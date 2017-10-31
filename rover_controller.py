@@ -106,7 +106,7 @@ setup_motor()
 os.environ["SDL_VIDEODRIVER"]="fbcon"
 os.putenv('DISPLAY', ':0.0')
 pygame.init()
-#pygame.display.set_mode((1,1))
+
 #Assuming there's only on joystick connected.
 stick=joystick.Joystick(0)
 stick.init()

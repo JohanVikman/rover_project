@@ -25,12 +25,10 @@ GPIO.setmode(GPIO.BOARD)
 Motor1A = 16
 Motor1B = 18
 Motor1E = 22
-# Motor1 is right/left
-Motor2A = 31
-Motor2B = 29                                                                   
-#Motor2A = 23
-#Motor2B = 21
-Motor2E = 19
+# Motor2 is right/left
+Motor2E = 40
+Motor2B = 38
+Motor2A = 19
 
 # PS 3 Button mapping:
 UP=4
@@ -54,31 +52,38 @@ R1=11
 def handle_button(event):
     if event.type == pygame.JOYBUTTONDOWN:
         if event.button == UP:
-            print "Going forwards"
+            print("Going forwards")
             GPIO.output(Motor1A,GPIO.HIGH)
             GPIO.output(Motor1B,GPIO.LOW)
             GPIO.output(Motor1E,GPIO.HIGH)
         elif event.button == DOWN:
-            print "Going backwards"
+            print("Going backwards")
             GPIO.output(Motor1A,GPIO.LOW)
             GPIO.output(Motor1B,GPIO.HIGH)
             GPIO.output(Motor1E,GPIO.HIGH)
         elif event.button == RIGHT:
-            print "Going right"
+            print("Going right")
             GPIO.output(Motor2A,GPIO.HIGH)
             GPIO.output(Motor2B,GPIO.LOW)
             GPIO.output(Motor2E,GPIO.HIGH)
         elif event.button == LEFT:
-            print "Going left"
+            print("Going left")
+            # GPIO.output(Motor2A,GPIO.LOW)
+            GPIO.output(Motor2E,GPIO.HIGH)
             GPIO.output(Motor2A,GPIO.LOW)
             GPIO.output(Motor2B,GPIO.HIGH)
-            GPIO.output(Motor2E,GPIO.HIGH)
     elif event.type == pygame.JOYBUTTONUP:
-        print "Now stop"
         if event.button == UP or event.button == DOWN:
+            print("Engine 1 stop")
             GPIO.output(Motor1E,GPIO.LOW)
-        if event.button == RIGHT or event.button == LEFT:
+            GPIO.output(Motor1A,GPIO.LOW)
+            GPIO.output(Motor1B,GPIO.LOW)
+        else:
+            print("Engine 2 stop")
+            #if event.button == RIGHT or event.button == LEFT:
             GPIO.output(Motor2E,GPIO.LOW)
+            GPIO.output(Motor2A,GPIO.LOW)
+            GPIO.output(Motor2B,GPIO.LOW)
         
 
 ## Motor1 = Forwards/Backwards
@@ -98,14 +103,10 @@ setup_motor()
 
 # USE Dummy display or else we cannot use pygame.event
 
-os.environ["SDL_VIDEODRIVER"]="dummy"
-if 1:
-    #some platforms might need to init the display for some parts of pygame.
-    screen = pygame.display.set_mode((1,1))
-
-
+os.environ["SDL_VIDEODRIVER"]="fbcon"
+os.putenv('DISPLAY', ':0.0')
 pygame.init()
-
+#pygame.display.set_mode((1,1))
 #Assuming there's only on joystick connected.
 stick=joystick.Joystick(0)
 stick.init()
